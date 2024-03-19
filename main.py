@@ -89,7 +89,4 @@ for user in users:
             db.enrollments.insert_one(enrollment)
     db.users.update_one({"_id": user["_id"]}, {"$set": {"enrolledCourses": user["enrolledCourses"]}})
 
-# Note: Submissions would be generated similarly based on the existing quizzes and users,
-# and inserting them into the 'submissions' collection.
-
 print("Random data generated and inserted into the database.")
