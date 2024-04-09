@@ -3,10 +3,8 @@ from faker import Faker
 import random
 from datetime import datetime
 
-# Initialize Faker
 fake = Faker()
 
-# Constants for the amounts of data to generate
 NUM_USERS = 100
 NUM_COURSES = 20
 NUM_ENROLLMENTS_PER_USER = 2
@@ -15,9 +13,16 @@ NUM_QUIZZES_PER_LESSON = 2
 NUM_QUESTIONS_PER_QUIZ = 3
 NUM_SUBMISSIONS_PER_QUIZ = 50  # Total across all users, not per user
 
-# Connect to MongoDB
 client = MongoClient('mongodb://localhost:27017/')
 db = client['online_learning']
+
+db.users.delete_many({})
+db.courses.delete_many({})
+db.enrollments.delete_many({})
+db.lessons.delete_many({})
+db.quizzes.delete_many({})
+db.quiz_questions.delete_many({})
+db.submissions.delete_many({})
 
 # Generate Users
 for _ in range(NUM_USERS):
@@ -82,7 +87,8 @@ for user in users:
                 "_id": fake.uuid4(),
                 "userId": user["_id"],
                 "courseId": course["_id"],
-                "enrollmentDate": fake.past_date(),
+                # Using fake.date_between() to generate a datetime object in the past
+                "enrollmentDate": fake.date_time_between(start_date="-2y", end_date="now"),
                 "progress": f"{random.randint(0, 100)}%"
             }
             user["enrolledCourses"].append(course["_id"])
